@@ -4,13 +4,13 @@ const { Server } = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
-
-// 儲存用戶同序號
-const users = {};
-let userCount = 0;
-
-app.use(express.static(__dirname + '/..'));
+const io = new Server(server, {
+    cors: {
+        origin: ['https://titusz1118.github.io', 'https://nanochats.online'],
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
+});
 
 io.on('connection', (socket) => {
     console.log('A user connected');
