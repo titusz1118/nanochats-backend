@@ -18,7 +18,7 @@ io.on('connection', (socket) => {
     console.log('A user connected');
 
     socket.on('register', (data) => {
-        console.log('Register attempt:', data); // 測試用
+        console.log('Register attempt:', data);
         if (users[data.username]) {
             socket.emit('registerResponse', { message: '用戶名已存在' });
         } else {
@@ -28,12 +28,27 @@ io.on('connection', (socket) => {
     });
 
     socket.on('login', (data) => {
-        console.log('Login attempt:', data); // 測試用
+        console.log('Login attempt:', data);
         if (users[data.username] && users[data.username] === data.password) {
             socket.emit('loginResponse', { success: true, message: '登入成功' });
         } else {
             socket.emit('loginResponse', { success: false, message: '用戶名或密碼錯誤' });
         }
+    });
+
+    socket.on('chatMessage', (data) => {
+        console.log('Chat message:', data);
+        io.emit('chatMessage', { message: data.message }); // 廣播訊息
+    });
+
+    socket.on('startVideo', (data) => {
+        console.log('Video call started by:', data.streamId);
+        socket.broadcast.emit('videoStream', { streamId: data.streamId }); // 廣播視訊
+    });
+
+    socket.on('stopVideo', () => {
+        console.log('Video call stopped');
+        socket.broadcast.emit('stopVideo');
     });
 });
 
